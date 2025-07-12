@@ -5,7 +5,7 @@ import {
   Copy, Edit2, Save, RefreshCcw, CheckCircle, Trash2, X, PlusCircle, GripVertical,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -286,11 +286,12 @@ const TeacherDetails: React.FC<Props> = ({ teacher }) => {
     const key = `${type}Qualifications` as keyof Teacher;
     const items = data?.[key] as Qualification[];
 
-    const handleDragEnd = (event: any) => {
+    const handleDragEnd = (event: DragEndEvent) => {
       const { active, over } = event;
       if (!over || active.id === over.id) return;
-      const oldIndex = parseInt(active.id.split("-")[1]);
-      const newIndex = parseInt(over.id.split("-")[1]);
+      const oldIndex = parseInt(String(active.id).split("-")[1]);
+      const newIndex = parseInt(String(over.id).split("-")[1]);
+
       const updated = arrayMove(items, oldIndex, newIndex);
       setData({ ...data!, [key]: updated });
     };
@@ -345,8 +346,8 @@ const TeacherDetails: React.FC<Props> = ({ teacher }) => {
               ${toast.type === "success"
                 ? "bg-green-600"
                 : toast.type === "info"
-                ? "bg-blue-600"
-                : "bg-red-600"}`}
+                  ? "bg-blue-600"
+                  : "bg-red-600"}`}
           >
             {toast.type === "success" && <CheckCircle className="w-5 h-5" />}
             {toast.type === "info" && <Copy className="w-5 h-5" />}
